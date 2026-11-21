@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#111827">
+  <title>{% block title %}Exam Arena{% endblock %}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { background: #f5f7fb; }
+    .glass { background: rgba(255,255,255,.88); backdrop-filter: blur(12px); }
+  </style>
+</head>
+<body class="min-h-screen text-slate-800 antialiased">
+  <nav class="border-b border-slate-200 bg-white">
+    <div class="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
+      <a href="{{ url_for('home') }}" class="flex items-center gap-3 font-bold tracking-tight text-slate-900">
+        <span class="grid h-9 w-9 place-items-center rounded-xl bg-indigo-600 text-lg text-white">✦</span>
+        <span>Exam <span class="text-indigo-600">Arena</span></span>
+      </a>
+      {% if session.get('student_id') %}
+      <div class="flex items-center gap-3 text-sm">
+        <span class="hidden text-slate-500 sm:inline">Signed in as <strong class="text-slate-800">{{ nav_student.name if nav_student else '' }}</strong></span>
+        <form action="{{ url_for('logout') }}" method="post"><button class="rounded-lg border border-slate-200 px-3 py-2 font-semibold hover:bg-slate-50">Log out</button></form>
+      </div>
+      {% endif %}
+    </div>
+  </nav>
+  <main class="mx-auto max-w-6xl px-5 py-10">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}<div class="mb-6 space-y-3">{% for category, message in messages %}
+        <div role="alert" class="rounded-xl border px-4 py-3 text-sm font-medium {{ 'border-red-200 bg-red-50 text-red-800' if category == 'error' else 'border-emerald-200 bg-emerald-50 text-emerald-800' }}">{{ message }}</div>
+      {% endfor %}</div>{% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+  <footer class="mx-auto max-w-6xl px-5 pb-8 text-xs text-slate-400">Exam Arena · Practice fairly, learn continuously.</footer>
+</body>
+</html>

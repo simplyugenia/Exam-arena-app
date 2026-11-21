@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Verified score — Exam Arena{% endblock %}
+{% block content %}
+<section class="mx-auto max-w-xl py-6">
+  <div class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl shadow-indigo-100/70">
+    <div class="flex items-center justify-between bg-slate-900 px-7 py-5 text-white"><a href="{{ url_for('home') }}" class="font-bold">Exam <span class="text-indigo-300">Arena</span></a><span class="rounded-full border border-emerald-400/40 bg-emerald-400/10 px-3 py-1 text-xs font-bold text-emerald-300">✓ VERIFIED RESULT</span></div>
+    <div class="p-8 text-center sm:p-10"><div class="mx-auto grid h-16 w-16 place-items-center rounded-2xl bg-indigo-50 text-3xl text-indigo-600">✦</div><p class="mt-5 text-sm font-bold uppercase tracking-widest text-slate-400">Challenge result</p><h1 class="mt-2 text-3xl font-black text-slate-900">{{ record.student_name }}</h1><p class="mt-2 text-slate-500">{{ record.quiz_title }}</p>
+      <div class="my-8 rounded-2xl bg-gradient-to-br from-indigo-50 to-violet-50 py-7"><p class="text-sm font-semibold text-indigo-700">FINAL SCORE</p><p class="mt-1 text-6xl font-black tracking-tight text-indigo-700">{{ record.score }}<span class="text-3xl text-indigo-300"> / 10</span></p></div>
+      <div class="flex items-center justify-center gap-2 text-sm text-slate-500"><span>◷</span><time>{{ record.submitted_at|replace('T', ' ')|replace('+00:00', ' UTC') }}</time></div>
+      <p class="mt-7 text-xs leading-5 text-slate-400">This score card is publicly viewable. Result details are verified by Exam Arena.</p>
+    </div>
+  </div>
+  <p class="mt-6 text-center text-sm text-slate-500">Think you can beat it? <a href="{{ url_for('home') }}" class="font-bold text-indigo-600 hover:text-indigo-700">Enter the arena</a></p>
+</section>
+{% endblock %}

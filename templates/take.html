@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Taking {{ quiz.title }} — Exam Arena{% endblock %}
+{% block content %}
+<div class="mx-auto max-w-3xl">
+  <div class="sticky top-3 z-10 mb-6 flex items-center justify-between rounded-2xl border border-slate-200 bg-white/95 p-4 shadow-sm backdrop-blur">
+    <div><p class="text-xs font-bold uppercase tracking-wider text-slate-400">In progress</p><p class="font-bold text-slate-900">{{ quiz.title }}</p></div>
+    <div class="text-right"><p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Time remaining</p><div id="countdown" data-seconds="{{ remaining }}" class="font-mono text-2xl font-black text-indigo-600" aria-live="polite">--:--</div></div>
+  </div>
+  <form action="{{ url_for('submit_quiz', quiz_id=quiz.id) }}" method="post">
+    <div class="space-y-5">
+      {% for question in questions %}
+      <fieldset class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <legend class="mb-4 block font-bold leading-6 text-slate-900"><span class="mr-2 text-indigo-600">{{ '%02d'|format(loop.index) }}</span>{{ question.question_text }}</legend>
+        <div class="grid gap-2 sm:grid-cols-2">
+        {% for option in question.options %}
+          <label class="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-200 p-3.5 text-sm text-slate-700 transition hover:border-indigo-300 has-[:checked]:border-indigo-500 has-[:checked]:bg-indigo-50 has-[:checked]:text-indigo-900"><input type="radio" name="answer_{{ question.id }}" value="{{ loop.index0 }}" class="accent-indigo-600"><span>{{ option }}</span></label>
+        {% endfor %}
+        </div>
+      </fieldset>
+      {% endfor %}
+    </div>
+    <div class="mt-6 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-900">The timer will reach zero, but this page will not submit automatically. Click Submit when ready; the server will reject submissions made after the deadline.</div>
+    <button class="mt-5 w-full rounded-xl bg-indigo-600 px-5 py-4 font-bold text-white shadow-lg shadow-indigo-200 transition hover:bg-indigo-700">Submit answers</button>
+  </form>
+</div>
+<script>
+  const timer = document.getElementById("countdown");
+  let seconds = Number(timer.dataset.seconds);
+  function renderTime() {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    timer.textContent = `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+    if (seconds <= 10) timer.classList.add("text-red-600");
+  }
+  renderTime();
+  const countdown = window.setInterval(() => {
+    if (seconds > 0) seconds -= 1;
+    renderTime();
+    if (seconds === 0) window.clearInterval(countdown);
+  }, 1000);
+</script>
+{% endblock %}

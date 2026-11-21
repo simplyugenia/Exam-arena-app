@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Exam Arena — Practice & prove your skills{% endblock %}
+{% block content %}
+{% if not student %}
+<section class="grid items-center gap-10 py-8 lg:grid-cols-[1.1fr_.9fr]">
+  <div>
+    <div class="mb-5 inline-flex items-center gap-2 rounded-full bg-indigo-50 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-indigo-700"><span class="h-2 w-2 rounded-full bg-indigo-500"></span> Your next challenge starts here</div>
+    <h1 class="max-w-2xl text-5xl font-black leading-tight tracking-tight text-slate-900 sm:text-6xl">Ready, set,<br><span class="text-indigo-600">show what you know.</span></h1>
+    <p class="mt-5 max-w-xl text-lg leading-8 text-slate-600">Choose a student profile and jump into a focused quiz. Your score is yours to share.</p>
+    <div class="mt-8 flex flex-wrap gap-3 text-sm text-slate-600"><span class="rounded-full bg-white px-4 py-2 shadow-sm">✓ Timed challenges</span><span class="rounded-full bg-white px-4 py-2 shadow-sm">✓ Verified results</span><span class="rounded-full bg-white px-4 py-2 shadow-sm">✓ One fair attempt</span></div>
+  </div>
+  <div class="glass rounded-3xl border border-white p-7 shadow-xl shadow-indigo-100/60 sm:p-9">
+    <h2 class="text-2xl font-bold text-slate-900">Enter the arena</h2>
+    <p class="mt-2 text-sm text-slate-500">Pick a seeded student, or sign in with a username.</p>
+    <form method="post" class="mt-6 space-y-4">
+      <label for="username" class="block text-sm font-semibold text-slate-700">Student profile</label>
+      <select id="username" name="username" required class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 outline-none ring-indigo-500 focus:ring-2">
+        <option value="" disabled selected>Select your name</option>
+        {% for user in students %}<option value="{{ user.username }}">{{ user.name }} · {{ user.username }}</option>{% endfor %}
+      </select>
+      <button class="w-full rounded-xl bg-indigo-600 px-5 py-3.5 font-bold text-white shadow-lg shadow-indigo-200 transition hover:bg-indigo-700">Continue to quizzes <span aria-hidden="true">→</span></button>
+    </form>
+    <div class="my-5 flex items-center gap-3 text-xs text-slate-400"><span class="h-px flex-1 bg-slate-200"></span>OR SIGN IN WITH USERNAME<span class="h-px flex-1 bg-slate-200"></span></div>
+    <form method="post" class="flex gap-2">
+      <input name="username" required placeholder="e.g. eugenia.o" autocomplete="username" class="min-w-0 flex-1 rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none ring-indigo-500 focus:ring-2">
+      <button class="rounded-xl border border-slate-200 px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-50">Sign in</button>
+    </form>
+    <p class="mt-4 text-center text-xs text-slate-400">Demo access · Usernames are shown beside each profile above.</p>
+  </div>
+</section>
+{% else %}
+<section class="mb-9 flex flex-wrap items-end justify-between gap-4">
+  <div><p class="text-sm font-bold uppercase tracking-widest text-indigo-600">Student dashboard</p><h1 class="mt-2 text-4xl font-black tracking-tight text-slate-900">Welcome, {{ student.name }}.</h1><p class="mt-2 text-slate-500">Choose a challenge and give it your best.</p></div>
+  <div class="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm text-slate-500"><span class="font-bold text-slate-800">{{ quizzes|length }}</span> challenges available</div>
+</section>
+<div class="grid gap-5 md:grid-cols-2">
+  {% for quiz in quizzes %}
+  <article class="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
+    <div class="flex items-start justify-between gap-4"><span class="grid h-12 w-12 place-items-center rounded-xl {{ 'bg-amber-50 text-amber-600' if quiz.time_limit < 30 else 'bg-indigo-50 text-indigo-600' }} text-xl font-black">{{ loop.index }}</span>
+      {% if quiz.attempt_status %}<span class="rounded-full px-3 py-1 text-xs font-bold {{ 'bg-emerald-50 text-emerald-700' if quiz.attempt_status == 'completed' else 'bg-slate-100 text-slate-600' }}">{{ 'Completed · ' ~ quiz.attempt_score ~ '/10' if quiz.attempt_status == 'completed' else quiz.attempt_status|capitalize }}</span>{% else %}<span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">Ready</span>{% endif %}
+    </div>
+    <h2 class="mt-5 text-xl font-bold text-slate-900">{{ quiz.title }}</h2><p class="mt-2 min-h-12 text-sm leading-6 text-slate-500">{{ quiz.description }}</p>
+    <div class="mt-5 flex gap-5 text-sm text-slate-500"><span>◷ {{ quiz.time_limit }} seconds</span><span>▤ 10 questions</span></div>
+    <a href="{{ url_for('quiz_rules', quiz_id=quiz.id) }}" class="mt-6 flex items-center justify-between rounded-xl border border-slate-200 px-4 py-3 text-sm font-bold text-slate-800 transition group-hover:border-indigo-200 group-hover:text-indigo-700">{{ 'View result' if quiz.attempt_status == 'completed' else 'View challenge' }} <span>→</span></a>
+  </article>
+  {% endfor %}
+</div>
+{% endif %}
+{% endblock %}
